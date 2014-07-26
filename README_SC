@@ -1,0 +1,11 @@
+SC
+
+SC is a Python library publicly available on Github
+
+This provides a Python library to interact with a Super Collider server using OSC
+
+The standard library sets up the server and then generates sound.  I have adapted the code to work with
+an existing server which is already running (as set up by Sonic Pi).
+
+TO DO:
+   Tidy up the code and finalise the library.  Suggesting renaming SC to an alternative name.
