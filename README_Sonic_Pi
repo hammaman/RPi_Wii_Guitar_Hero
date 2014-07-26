@@ -1,0 +1,13 @@
+Sonic Pi
+
+Sonic Pi has been developed by Dr Sam Aaron, and is currently written in Ruby.
+
+The source code is publicly available at:
+   github.com/samaaron/sonic-pi
+   
+From working through the code with my limited knowledge of Ruby, I believe:
+
+1. Sonic Pi uses the Super Collider server to generate sound, using port 4556
+2. Sonic Pi sets up and runs the server on the Pi, together with Jackd, and ALSA functionality.
+3. Notes are sent between the Sonic Pi workspaces and the server using OSC
+
