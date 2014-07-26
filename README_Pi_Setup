@@ -1,0 +1,34 @@
+HOW TO SET UP YOUR PI TO GET STARTED
+
+ 1. Activate I2C on the Raspberry Pi
+    I followed the Adafruit instructions here:
+    https://learn.adafruit.com/adafruits-raspberry-pi-lesson-4-gpio-setup/configuring-i2c
+
+    but there are also instructions here:
+    http://www.raspberry-projects.com/pi/pi-operating-systems/raspbian/io-pins-raspbian/i2c-pins
+
+    I2C works using 4 connections:
+      Positive voltage (3v3 which means 3.3 volts - in electronics, decimal points are avoided)
+      Data channel #1 - SDA
+      Data channel #2 - SCL
+      Ground (GND or 0v)
+
+    This is not the place for a wiring diagram!  So you will need to google to find out how to connect 4 leads to the headers 
+
+ 2. Connect the Nunchuk end (i.e. the end that goes into a Wiimote) to the Pi
+    I am using an adapter (search for "wii nunchuk arduino adapter" on google)
+    which is a small flat PCB which has one end to go into the nunchuk, and then 4 pins to make the I2C connection 
+
+    An alternative is to simply wedge leads into the Nunchuk connector.  wiibrew.org (see link above) has a wiring diagram for where
+    to attach the 4 leads onto the Nunchuk connector.
+
+    All Nunchuk type devices are accessible via I2C protocol
+    The device has an I2C "location" of 0x52
+
+    This can be checked by running in the LXTerminal window (or command prompt if not using X):
+       sudo i2cdetect -y 1
+    NOTE: if you have an early Raspberry Pi (like I do), the I2C was setup differently to use 0
+    i.e. the command becomes:   sudo i2cdetect -y 0
+
+    If connected, you will see a grid with 52 mentioned in the middle
+
