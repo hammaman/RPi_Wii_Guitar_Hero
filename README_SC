@@ -4,6 +4,112 @@ SC is a Python library publicly available on Github
 
 This provides a Python library to interact with a Super Collider server using OSC
 
+Library structure:
+
+sc
+==
+
+sc.py
+  start(exedir, port, inputs, outputs, samplerate, verbose, spew, startscsynth)
+  quit
+  register(address, function)
+  loadSnd(filename, wait)
+  unloadSnd(buffer_id)
+  loadSndAbs(path, wait)
+
+Classes:
+  Synth(object)
+    __init__(self, stringdefname, nodeID, addAction, addTargetID)
+    __setattr__(self, item, value)
+    free(self)
+    run(self, b)
+
+  Group(object)
+    __init__(self, groupID, addAction, addTargetID)
+    __setattr__(self, item, value)
+    addToHead(self, node)
+    addToTail(self, node)
+    freeAll(self)
+    deepFree(self)
+
+__init__.py (just sets up sc.py)
+
+scsynth
+=======
+
+container.py
+
+Classes:
+  ContainerProxyBase(object)
+  ListProxy(ContainerProxyBase)
+  DictProxy(ContainerProxyBase)
+
+
+loader.py
+
+Classes:
+  Loader
+    __init__(self,server)
+    load(self, fpath, wait, b_query)
+    unload(self, bid, wait)
+
+
+notestream.py
+(imports pattern)
+
+Classes:
+  Notestream
+    __init__(self, pattern)
+    loop(self, on)
+    notes_for_step(self, step)
+    to_looptime(self, notes)
+    read(self)
+
+
+
+
+pattern.py
+(imports container)
+
+Classes:
+  Note
+    __init__(self, start, stop, pitch)
+    calc_abs(self, spb)
+    __str__(self)
+    __eq__(self)
+    note_cmp(a,b)
+
+  Pattern
+    __init__(self, beats)
+    __str__(self)
+    add(self, note)
+    notes_for(self, start, stop)
+    copy(self)
+
+toelem(pattern, elem)
+write(pattern,fpath)
+read(pattern,fpath)
+
+
+player.py
+(import container)
+
+Classes:
+  Synth(container.DictProxy)
+
+
+
+
+pool.py
+process.py
+sequencer.py
+server.py
+tempoclock.py
+window.py
+
+
+__init__.py (just sets up scsynth.py)
+
 The standard library sets up the server and then generates sound.  I have adapted the code to work with
 an existing server which is already running (as set up by Sonic Pi).
 
