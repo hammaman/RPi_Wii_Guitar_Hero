@@ -54,7 +54,7 @@ version = GPIO.RPI_REVISION
 if version == 1: 
     RPI_VERSION = 0
 else:
-	RPI_VERSION = 1
+    RPI_VERSION = 1
 
 # 0 = /dev/i2c-0 (port I2C0), 1 = /dev/i2c-1 (port I2C1)
 bus = smbus.SMBus(RPI_VERSION)
@@ -91,6 +91,7 @@ def Get_Device_Connected():
     
     bus.write_byte_data(DEVICE_ADDRESS, DEVICE_REGTYPE, 0x00)
     time.sleep(SLEEP_TIME)
+    result = bus.read_byte_data(DEVICE_ADDRESS, DEVICE_REGTYPE)
     full_data = bus.read_i2c_block_data(DEVICE_ADDRESS, DEVICE_REGTYPE) 
 
     #Extract first 6 bytes and store as a string in hex format
@@ -276,16 +277,16 @@ GH_GUITFRT3 = 0x04
 GH_GUITFRT4 = 0x02
 GH_GUITFRT5 = 0x01
  
-def GHguitarbutton(data_received):
+def GHguitar_button(data_received):
     return ((data_received[5] >> 3) & 0x1F)
 
-def GHguitarstrumup(data_received):
+def GHguitar_strumup(data_received):
     return (data_received[5] & 0x01)
 
-def GHguitarstrumdn(data_received):
-    return ((Wii_GH_buf[4] >> 6) & 0x01)
+def GHguitar_strumdn(data_received):
+    return ((data_received[4] >> 6) & 0x01)
 
-def GHguitarwhammy(data_received):
+def GHguitar_whammy(data_received):
 # Whammy bar seems to fluctuate around B01111 and B10000 at rest
 # and increases to B11001 when fully pressed
 # so instead of reading 5 bits, I am just reading the last 4
@@ -297,7 +298,7 @@ def GHguitarwhammy(data_received):
 
 
 def GHguitartouchbar(data_received):
-    GHguitarb = (data_received[2] & 0x1F)
+    GHguitartb = (data_received[2] & 0x1F)
     if (GHguitartb == 0x04):
         return GH_GUITFRT1
     elif (GHguitartb == 0x07):
@@ -376,7 +377,7 @@ def GHguitartouchbar(data_received):
 #Python code:
 
 def get_guitar_state(GHdata):
-    guitar_state = []
+    guitar_state = [0,0,0,0,0,0,0]
     guitar_state[0] = GHguitar_button(GHdata)
     guitar_state[1] = GHguitar_strumup(GHdata) - GHguitar_strumdn(GHdata) # i.e. +1 if up, -1 if down and 0 if neither
     guitar_state[2] = GHguitar_whammy(GHdata)
@@ -384,7 +385,7 @@ def get_guitar_state(GHdata):
     guitar_state[4] = GHjoyx(GHdata)
     guitar_state[5] = GHjoyy(GHdata)
     guitar_state[6] = GHbutplus(GHdata) - GHbutminus(GHdata)
-    return guitar_state[]  
+    return guitar_state  
 
 import time
 
@@ -393,18 +394,18 @@ last_time = time.time() # get current time
 
 #Loop to find the instrument connected. If not found after 30 seconds, program will stop
 while (loop_flag == True):
-	time.sleep(1) #Wait 1 second
+    time.sleep(1) #Wait 1 second
     Device_Setup()
     instrument = Get_Device_Connected()
-	if instrument <> 'Unknown':
-	    loop_flag = False
-	if time.time() > last_time + 30000:
-	    loop_flag = False
+    if instrument <> 'Unknown':
+        loop_flag = False
+    if time.time() > last_time + 30000:
+        loop_flag = False
 # Loop round until an instrument is found
-	
-if instrument = 'Unknown':
+    
+if (instrument == 'Unknown'):
     print "No instrument found - check connections"
-	#stop	
+    #stop   
 
 # Define variables
 last_state = [0, 0, 0, 0, 0, 0]
@@ -419,22 +420,22 @@ loop_flag = True
 while (loop_flag == True):
     currentstate = MyReadData(DEVICE_ADDRESS, DEVICE_REGTYPE, False)
     if instrument == 'Guitar':
-	     instr_state = get_guitar_state(currentstate)
-		 
-		 #Firstly need to check if playing a note and released the button
+         instr_state = get_guitar_state(currentstate)
+         
+         #Firstly need to check if playing a note and released the button
          if ((instr_state[0] <> last_state[0]) and (last_button_pressed == last_state[0])):
              #stop playing the note and set last_button_pressed to zero
-			 if (Debugmode == True):
-			     print "Stopping playing note"
-			 last_button_pressed = 0
-			 last_state[0] = 0
-			 
-	     #Next need to check if guitar is being strummed - only reacting on up or down (not central)
-		 # also need to check that guitar is being strummed together with a button press
-		 if (instr_state[1] <> 0) and (instr_state[0] <> 0):
-		     if (Debugmode == True):
-			     print "Strum and button press - play note"
-		     last_button_pressed = instr_state[0]
-			 last_state[0] = instr_state[0]
+             if (Debugmode == True):
+                 print "Stopping playing note"
+             last_button_pressed = 0
+             last_state[0] = 0
+             
+         #Next need to check if guitar is being strummed - only reacting on up or down (not central)
+         # also need to check that guitar is being strummed together with a button press
+         if (instr_state[1] <> 0) and (instr_state[0] <> 0):
+             if (Debugmode == True):
+                 print "Strum and button press - play note"
+             last_button_pressed = instr_state[0]
+             last_state[0] = instr_state[0]
 
          
